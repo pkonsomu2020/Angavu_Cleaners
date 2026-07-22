@@ -1,6 +1,7 @@
 "use client"
 import { Box, Flex, HStack, Image, Text, Icon } from "@chakra-ui/react"
 import { useState, useEffect, useRef } from "react"
+import { useNavigate, useLocation } from "react-router-dom"
 import { LuMenu, LuX, LuMoon, LuSun } from "react-icons/lu"
 import { keyframes } from "@emotion/react"
 import { useColorMode } from "./ui/color-mode"
@@ -24,6 +25,8 @@ export default function Navbar() {
   const [open,    setOpen]    = useState(false)
   const [visible, setVisible] = useState(true)
   const lastY = useRef(0)
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
   const { colorMode, toggleColorMode } = useColorMode()
   const isDark = colorMode === "dark"
 
@@ -47,6 +50,11 @@ export default function Navbar() {
 
   const handleNav = (href: string) => {
     setOpen(false)
+    // On a sub-page (e.g. /pricing), route home first, then scroll to the section.
+    if (pathname !== "/") {
+      navigate("/", { state: { scrollTo: href } })
+      return
+    }
     setTimeout(() => {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" })
     }, 50)

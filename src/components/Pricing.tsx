@@ -1,38 +1,23 @@
 "use client"
 import { Box, VStack, HStack, Text, Heading, SimpleGrid, Badge, Button, Tabs, Icon, Separator } from "@chakra-ui/react"
 import { useState } from "react"
-import { LuCheck, LuSparkles, LuSofa, LuShirt } from "react-icons/lu"
+import { Link as RouterLink } from "react-router-dom"
+import { LuCheck, LuArrowRight, LuSofa, LuLayers, LuBedDouble, LuBlinds } from "react-icons/lu"
+import { roomCategories, roomCategoryMap, addOnTeaser } from "../data/pricing"
 import { useColorMode } from "./ui/color-mode"
 
-const standardPricing = [
-  { unit: "Bedsitter",   price: "KSh 1,200" },
-  { unit: "1 Bedroom",   price: "KSh 1,800" },
-  { unit: "2 Bedrooms",  price: "KSh 2,500" },
-  { unit: "3 Bedrooms",  price: "KSh 3,500" },
-]
-const deepPricing = [
-  { unit: "Bedsitter",   price: "KSh 2,000" },
-  { unit: "1 Bedroom",   price: "KSh 2,500" },
-  { unit: "2 Bedrooms",  price: "KSh 3,800" },
-  { unit: "3 Bedrooms",  price: "KSh 5,400" },
-]
-const extraCleaning = [
-  { icon: LuSofa,     service: "Sofa Cleaning",     price: "KSh 500 per seater" },
-  { icon: LuShirt,    service: "Folding Clothes",   price: "KSh 500 per load"   },
-  { icon: LuSparkles, service: "Mattress Cleaning", price: "KSh 700 - 1,000"   },
-]
+const teaserIcons = [LuSofa, LuLayers, LuBedDouble, LuBlinds]
 
 export default function Pricing() {
-  const [activeTab, setActiveTab] = useState("standard")
+  const [activeTab, setActiveTab] = useState<string>("bnb")
   const { colorMode } = useColorMode()
   const isDark = colorMode === "dark"
-  const currentPricing = activeTab === "standard" ? standardPricing : deepPricing
+  const current = roomCategoryMap[activeTab as "bnb" | "standard" | "deep"]
 
   const cardBg   = isDark ? "#0f2444" : "white"
   const sectionBg= isDark ? "#0a1628" : "gray.50"
   const textMain = isDark ? "blue.100" : "blue.900"
   const textSub  = isDark ? "blue.300" : "gray.500"
-  const border   = isDark ? "blue.700" : "blue.100"
   const rowHover = isDark ? "blue.900" : "blue.50"
 
   return (
@@ -61,14 +46,13 @@ export default function Pricing() {
               <Tabs.List bg={isDark ? "blue.900" : "blue.50"} rounded="xl" p="1"
                 border="1px solid" borderColor={isDark ? "blue.700" : "blue.100"} mb="6"
               >
-                <Tabs.Trigger value="standard" flex="1" rounded="lg" fontWeight="semibold" fontSize="sm"
-                  color={isDark ? "blue.300" : undefined}
-                  _selected={{ bg: "blue.700", color: "white" }}
-                >Standard Cleaning</Tabs.Trigger>
-                <Tabs.Trigger value="deep" flex="1" rounded="lg" fontWeight="semibold" fontSize="sm"
-                  color={isDark ? "blue.300" : undefined}
-                  _selected={{ bg: "blue.700", color: "white" }}
-                >Deep Cleaning</Tabs.Trigger>
+                {roomCategories.map((cat) => (
+                  <Tabs.Trigger key={cat.key} value={cat.key} flex="1" rounded="lg"
+                    fontWeight="semibold" fontSize={{ base: "xs", md: "sm" }}
+                    color={isDark ? "blue.300" : undefined}
+                    _selected={{ bg: "blue.700", color: "white" }}
+                  >{cat.label}</Tabs.Trigger>
+                ))}
               </Tabs.List>
 
               <Tabs.Content value={activeTab}>
@@ -77,17 +61,13 @@ export default function Pricing() {
                 >
                   <Box bg="blue.700" px="6" py="5">
                     <HStack justify="space-between">
-                      <Text fontWeight="black" color="white" fontSize="lg">
-                        {activeTab === "standard" ? "Standard Cleaning" : "Deep Cleaning"}
-                      </Text>
+                      <Text fontWeight="black" color="white" fontSize="lg">{current.label}</Text>
                       <Badge bg="white" color="blue.700" fontWeight="bold" rounded="full" px="3">Best Value</Badge>
                     </HStack>
-                    <Text fontSize="sm" color="blue.100" mt="1">
-                      {activeTab === "standard" ? "Regular cleaning for a fresh, tidy home" : "Intensive deep-dive cleaning for every corner"}
-                    </Text>
+                    <Text fontSize="sm" color="blue.100" mt="1">{current.tagline}</Text>
                   </Box>
                   <VStack gap="0" align="stretch" p="6">
-                    {currentPricing.map((item, i) => (
+                    {current.rows.map((item, i) => (
                       <Box key={item.unit}>
                         <HStack justify="space-between" py="4" _hover={{ bg: rowHover }}
                           px="2" mx="-2" rounded="lg" transition="all 0.2s"
@@ -105,7 +85,7 @@ export default function Pricing() {
                             {item.price}
                           </Text>
                         </HStack>
-                        {i < currentPricing.length - 1 && <Separator borderColor={isDark ? "blue.800" : "gray.100"} />}
+                        {i < current.rows.length - 1 && <Separator borderColor={isDark ? "blue.800" : "gray.100"} />}
                       </Box>
                     ))}
                     <Box bg={isDark ? "blue.900" : "blue.50"} rounded="xl" p="4" mt="4"
@@ -124,17 +104,17 @@ export default function Pricing() {
             </Tabs.Root>
           </Box>
 
-          {/* Extra + CTA */}
+          {/* Add-on teaser + View More CTA */}
           <VStack gap="6" align="stretch">
             <Box bg={cardBg} rounded="2xl" overflow="hidden"
               boxShadow={isDark ? "none" : "md"} border="2px solid" borderColor={isDark ? "blue.700" : "blue.200"}
             >
               <Box bg="blue.700" px="6" py="5">
-                <Text fontWeight="black" color="white" fontSize="lg">Extra Cleaning Services</Text>
-                <Text fontSize="sm" color="blue.100" mt="1">Add-on services for specific needs</Text>
+                <Text fontWeight="black" color="white" fontSize="lg">Popular Add-Ons</Text>
+                <Text fontSize="sm" color="blue.100" mt="1">Extra services you can bundle with any clean</Text>
               </Box>
               <VStack gap="0" align="stretch" p="6">
-                {extraCleaning.map((item, i) => (
+                {addOnTeaser.map((item, i) => (
                   <Box key={item.service}>
                     <HStack justify="space-between" py="4" _hover={{ bg: rowHover }}
                       px="2" mx="-2" rounded="lg" transition="all 0.2s"
@@ -144,7 +124,7 @@ export default function Pricing() {
                           bg={isDark ? "blue.800" : "blue.100"}
                           display="flex" alignItems="center" justifyContent="center"
                         >
-                          <Icon as={item.icon} color={isDark ? "blue.300" : "blue.600"} boxSize="4" />
+                          <Icon as={teaserIcons[i]} color={isDark ? "blue.300" : "blue.600"} boxSize="4" />
                         </Box>
                         <Text fontWeight="semibold" color={textMain} fontSize="sm">{item.service}</Text>
                       </HStack>
@@ -152,25 +132,39 @@ export default function Pricing() {
                         {item.price}
                       </Text>
                     </HStack>
-                    {i < extraCleaning.length - 1 && <Separator borderColor={isDark ? "blue.800" : "gray.100"} />}
+                    {i < addOnTeaser.length - 1 && <Separator borderColor={isDark ? "blue.800" : "gray.100"} />}
                   </Box>
                 ))}
+                <Text fontSize="xs" color={textSub} mt="3" px="2">
+                  Bedsheets, chester beds, dining seats, curtains &amp; more on the full list.
+                </Text>
               </VStack>
             </Box>
 
+            {/* View More CTA */}
             <Box bg="blue.700" rounded="2xl" p="8" position="relative" overflow="hidden">
+              <Box position="absolute" top="-40%" right="-10%" w="220px" h="220px"
+                rounded="full" bg="white" opacity="0.08" />
               <VStack align="flex-start" gap="4" position="relative">
-                <Heading as="h3" fontSize="2xl" fontWeight="black" color="white">Ready to Book?</Heading>
+                <Heading as="h3" fontSize="2xl" fontWeight="black" color="white">See Every Price</Heading>
                 <Text fontSize="sm" color="blue.100" lineHeight="tall">
-                  Get your space professionally cleaned today. Contact us via WhatsApp or call to schedule.
+                  Carpets, mattresses by size, chester beds, dining seats, curtains and more &mdash;
+                  view our complete, itemised price list.
                 </Text>
-                <Box as="a" href="https://wa.me/254768549839" target="_blank">
+                <RouterLink to="/pricing" style={{ display: "inline-block" }}>
                   <Button bg="white" color="blue.700" fontWeight="black" rounded="full" px="6"
                     _hover={{ bg: "blue.50", transform: "translateY(-2px)", boxShadow: "lg" }}
                     transition="all 0.2s"
-                  >WhatsApp Us</Button>
+                  >
+                    View Full Price List
+                    <Icon as={LuArrowRight} ml="2" />
+                  </Button>
+                </RouterLink>
+                <Box as="a" href="https://wa.me/254768549839" target="_blank">
+                  <Text fontSize="sm" color="blue.100" fontWeight="semibold"
+                    _hover={{ color: "white" }} transition="color 0.2s"
+                  >or WhatsApp us &rarr; 0768 549 839</Text>
                 </Box>
-                <Text fontSize="xs" color="blue.200">0768 549 839 · angavucleanerz@gmail.com</Text>
               </VStack>
             </Box>
           </VStack>
