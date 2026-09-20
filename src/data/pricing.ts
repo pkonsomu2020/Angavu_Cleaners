@@ -22,10 +22,10 @@ export const roomCategories: RoomCategory[] = [
     label: "BnB Turnover",
     tagline: "Fast, guest-ready turnovers between stays",
     rows: [
-      { unit: "Bedsitter", price: "KSh 800" },
-      { unit: "1 Bedroom", price: "KSh 1,200" },
-      { unit: "2 Bedrooms", price: "KSh 1,800" },
-      { unit: "3 Bedrooms", price: "KSh 2,400" },
+      { unit: "Bedsitter", price: "KSh 500" },
+      { unit: "1 Bedroom", price: "KSh 1,000" },
+      { unit: "2 Bedrooms", price: "KSh 1,500" },
+      { unit: "3 Bedrooms", price: "KSh 2,300" },
       { unit: "Same-Day Express Cleaning", price: "KSh 500" },
     ],
     extras: [
@@ -39,10 +39,10 @@ export const roomCategories: RoomCategory[] = [
     label: "Standard Cleaning",
     tagline: "Regular cleaning for a fresh, tidy home",
     rows: [
-      { unit: "Bedsitter", price: "KSh 1,200" },
-      { unit: "1 Bedroom", price: "KSh 1,800" },
-      { unit: "2 Bedrooms", price: "KSh 2,500" },
-      { unit: "3 Bedrooms", price: "KSh 3,500" },
+      { unit: "Bedsitter", price: "KSh 1,000" },
+      { unit: "1 Bedroom", price: "KSh 1,500" },
+      { unit: "2 Bedrooms", price: "KSh 2,300" },
+      { unit: "3 Bedrooms", price: "KSh 3,200" },
     ],
     extras: [
       { service: "Sofa Cleaning", price: "KSh 500 / seater" },
@@ -67,11 +67,14 @@ export const roomCategories: RoomCategory[] = [
 export const roomCategoryMap: Record<RoomCategory["key"], RoomCategory> =
   roomCategories.reduce((acc, c) => ({ ...acc, [c.key]: c }), {} as Record<RoomCategory["key"], RoomCategory>)
 
-// ── Carpet cleaning (by size, in feet) ──
+// ── Carpet cleaning (by size, in feet & material) ──
 export const carpetCleaning: PriceRow[] = [
-  { unit: "5 × 6 ft", price: "KSh 750" },
-  { unit: "7 × 5 ft", price: "KSh 875" },
-  { unit: "7 × 10 ft", price: "KSh 1,750" },
+  { unit: "5 × 6 ft (Normal)", price: "KSh 450" },
+  { unit: "7 × 5 ft (Normal)", price: "KSh 525" },
+  { unit: "7 × 10 ft (Normal)", price: "KSh 1,050" },
+  { unit: "5 × 6 ft (Fluffy)", price: "KSh 750" },
+  { unit: "7 × 5 ft (Fluffy)", price: "KSh 875" },
+  { unit: "7 × 10 ft (Fluffy)", price: "KSh 1,250" },
 ]
 
 // ── Detailed add-on tables ──
@@ -102,7 +105,7 @@ export const curtains: PriceRow[] = [
 // A compact teaser used on the homepage right-hand column
 export const addOnTeaser: ExtraRow[] = [
   { service: "Sofa Cleaning", price: "KSh 500 / seater" },
-  { service: "Carpet Cleaning", price: "from KSh 750" },
+  { service: "Carpet Cleaning", price: "from KSh 450" },
   { service: "Mattress Cleaning", price: "from KSh 1,200" },
   { service: "Curtains", price: "from KSh 150" },
 ]
